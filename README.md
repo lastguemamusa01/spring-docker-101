@@ -644,17 +644,3 @@ public class CircuitBreakerController {
 }
 
 
-
-
-
-
-Distributed tracing – spring cloud sleuth
-Spring cloud bus
-
-
-Rabbit MQ
-Zipkin and dashboard
-Docker and docker compose for containerization
-
-Kubernetes – orchestrate all your microservices
-![image](https://user-images.githubusercontent.com/25869911/120239588-38a6d180-c224-11eb-953b-742501dbd2d1.png)
