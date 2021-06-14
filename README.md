@@ -94,7 +94,8 @@ docker app has docker client and docker daemon. Docker daemon manage the contain
 
 docker app knows the location of the local images, if not is going to download docker hub.
 
- 
+ ![image](https://user-images.githubusercontent.com/25869911/121826164-fea1ea80-cc7b-11eb-8c14-aacce7fecea0.png)
+
 
 Enviroments is in cloud, docker can installed in cloud.
 
@@ -187,7 +188,8 @@ Distritubted tracing(complex call chain when the microservices depends another m
 
 How do you debug problems, how do you trace requests across microservices, what microservices is causing the problem.
 
- 
+ ![image](https://user-images.githubusercontent.com/25869911/121826183-0cf00680-cc7c-11eb-9d47-c487d2ff1828.png)
+
 
 All microservices send information to one distrusted tracing server(store database in memory or persistent database) and distributed tracing server provide interface to trace the issues in microservices.
 
@@ -378,6 +380,8 @@ Rabbit mq
 we using message queue, because if the distrusted tracing server is down, the data will be losed, so we can store in the queue(rabbit mq).
  
 
+![image](https://user-images.githubusercontent.com/25869911/121826198-1b3e2280-cc7c-11eb-98b8-677fb5d010d6.png)
+
 
 Add rabbit mq in pom.xml
 
@@ -499,6 +503,7 @@ services:
       RABBIT_URI: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - rabbitmq
+    restart: always #Restart if there is a problem starting up
     
   rabbitmq:
     image: rabbitmq:3.5.3-management
