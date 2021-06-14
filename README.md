@@ -1,646 +1,513 @@
-# spring-cloud-101
+# spring-docker-101
+
+Build small focused microservices – flexibility to innovate and build application in different languages
+
+Common way to deploy multiple microservices not depending language or framework. One way of deploying by using containers
+
+Docker and docker compose for containerization
+
+Create docker image for each microservices(contains application runtime, application code and dependencies). 
+
+Install docker
+
+Virtual machines use hardware, hostos, hypervisor, guest os 1, software 1, application 1 etc.
+
+Docker – cloudinfrastructure, hostos, dockerengine, containers
 
 
-Microservices with spring boot
+Old approach – premiase – hardware – install linux – install java and tomcat , download jar y run command.  Docker automate all this.
 
 
-Microservices – small autonomous services that work together.
-There is a bare minimum of centralized management of these services, which may be written in different programming languages and use different data storage technologies.
-Rest services , small well choson deployable units and cloud enabled
+Docker command
 
-Cloud – have multiple instances 
+Docker –-version
 
-Challenges – 
-
-1 – bounded context – how to indentify boundely of each microservices, business knowledge for boundely. This is done evolutionary – gaining knowledge, put in the microservices.
-2 – configuration management – 10 microservices x 5 enviroments = 50 instances.  – maintain
-3 – dynamic scale up and scale down – load in dieferent microservices will be different. Bring down the instance when they don’t need it.  Dynmic load balancing. Dynamic distribuition among active instances
-4 – visibility – centralized log for know where is the functionality of 10 microservices, where it the bug. Monitoring microservices, 100 microservices. Automatically identify servers without disks spaces – instances
-5 - pack of cards – if not weel designed, microservices calling another microservices, if the core microservices fail, all microservices that is depending fall like domino. Have fault tolerance for your microservices.
-
-Spring cloud – help to resolve challenge – provides tools for developers to quickly build some of the common patterns in distributed systems. Not only 1 project, a lot of project.
-
-Important – spring cloud Netflix – open source of Netflix – eureka
-
--	Configuration of management – multiple instances of microservices – a lot of configurations – SpringCloudConfigServer – store all the configurations all different environment of all microservices(centralized location)
-
--	Dynamic scale up and down 
-
--	Eureka(naming server) – instances will be registered, ribbon(client side load balancing) and feign(easier rest clients)
+Docker run in28min/todo-rest-api-h2:1.0.0.RELEASE
  
-![image](https://user-images.githubusercontent.com/25869911/120239629-49efde00-c224-11eb-91fc-a80296b1659f.png)
+VERSION
+
+1.0.0.RELEASE
+
+
+
+When cannot find in local its search on the docker hub and pull – image Is downloader
+
+Docker hub is registry – contains a lot of repositories, different version of different application
+
+Docker hub is registry
+
+Registry – hub.docker.com.  and contain number of repositories
+
+Entepraise work private repository
+
+Repository -  in28min/todo-rest-api-h2
+
+Container contains library, java version
+
+Image(static) -static – bytes
+
+Container(dynamic) – running version of your image
+
+Image is downloader in repository and is like a class and container is like an object
 
 
 
 
+To run correctly :
 
-Visibility and monitoring 
-	- Zipkin distrubted tracing – trace request across to multiple components
-	- netflix zuel API gateway
+ Docker run -p 5000:5000 in28min/todo-rest-api-h2:1.0.0.RELEASE
 
-Logging, security and analytics are the common thing in microservices. Don’t implement all this common features in each microservices, netflix zuel API gateway
-provide great solution.
+Host system port: internal container port
 
-Fault tolerance using hystrix if a service down – hystrix help us configure a default response.
+By default the container is part of something called a bridge network(internal docker network) , no body can access unless you expose it on to the host.
 
-
-Advantage of microservices 
+http://localhost:5000/hello-world
+http://localhost:5000/hello-world-bean
 
 
--	Enable to adapt new technology and processes very easy
--	Monolithic don’t have that flexibility of communication
--	Java microservice, node js microservice, microservice kotlin etc etc. 
--	Dynamic scaling – example amazon – same amount of load , traffic or users thoroughout the year, special holiday season.
--	Microservices cloud enabled scale dynamically. Scale up and down based on load.
--	Small component – faster release cycles, new features faster.
--	
+-d -> detach mode – run in background – you can ctrl c to exit and you have container id
 
+Docker run -p 5000:5000 -d in28min/todo-rest-api-h2:1.0.0.RELEASE
 
-Components  or applications – 
+You can see logs
 
-Ports
-Application	Port
-Limits Service	8080, 8081, ...
-Spring Cloud Config Server	8888
-	
-Currency Exchange Service	8000, 8001, 8002, ..
-Currency Conversion Service	8100, 8101, 8102, ...
-Netflix Eureka Naming Server	8761
-Netflix Zuul API Gateway Server	8765
-Zipkin Distributed Tracing Server	9411
-URLs
-Application	URL
-Limits Service	http://localhost:8080/limits http://localhost:8080/actuator/refresh (POST)
+Docker logs 2e07d5f53761dfc2689453f8e21a2947e623a58c138d49072f78ab06774e8e6d
 
-Spring Cloud Config Server	http://localhost:8888/limits-service/default http://localhost:8888/limits-service/dev
+-f -> tailling logs , when you click on the web page you can see what happen in the log
 
-Currency Converter Service - Direct Call	http://localhost:8100/currency-converter/from/USD/to/INR/quantity/10
+Docker logs -f 2e07d5f53761dfc2689453f8e21a2947e623a58c138d49072f78ab06774e8e6d
 
-Currency Converter Service - Feign	http://localhost:8100/currency-converter-feign/from/EUR/to/INR/quantity/10000
+To see what container is running
 
-Currency Exchange Service	http://localhost:8000/currency-exchange/from/EUR/to/INR http://localhost:8001/currency-exchange/from/USD/to/INR
+Docker container ls
 
-Eureka	http://localhost:8761/
+We can run multiple container from same image in different ports
 
-Zuul - Currency Exchange & Exchange Services	http://localhost:8765/currency-exchange-service/currency-exchange/from/EUR/to/INR http://localhost:8765/currency-conversion-service/currency-converter-feign/from/USD/to/INR/quantity/10
+Docker run -p 5001:5000 -d in28min/todo-rest-api-h2:1.0.0.RELEASE
 
-Zipkin	http://localhost:9411/zipkin/
+Docker images – command to see all docker images we have
+docker container ls -a -> command show me all the containers – running and stopped
 
-Spring Cloud Bus Refresh	http://localhost:8080/actuator/bus-refresh (POST)
+docker container stop cc34a(container id of first 5 digits) -> stop the continers
 
+docker app has docker client and docker daemon. Docker daemon manage the containers, local images and image registry(somebody else can use, like repository)(nginx, mysql,eureka, you-app)
 
-![image](https://user-images.githubusercontent.com/25869911/120239656-58d69080-c224-11eb-972c-3849d37f9e48.png)
-
-![image](https://user-images.githubusercontent.com/25869911/120239665-5ffd9e80-c224-11eb-96ac-5695aff1a50a.png)
-
- 
- 
-
-Microservice version 2
+docker app knows the location of the local images, if not is going to download docker hub.
 
  
 
+Enviroments is in cloud, docker can installed in cloud.
 
-Spring cloud -tools for microservices
-Git and git repository
+Virtual machines – hardware- host os – hypervisor(to manage virtual machines)  -> has guest os, software and application1.   Disvantage – heavy
 
+Docker – cloudinfrastruture, hostOS. And docker engine(install the os, etc) -> advantage is not heavier.
 
--	Spring boot centralized configuration –
--	How to limit services
 
+AWS – elastic container service
 
-Add config client – spring cloud config in spring start io
+Single image can have multiple tag – custom tag
 
- 
- ![image](https://user-images.githubusercontent.com/25869911/120239678-655ae900-c224-11eb-8035-f07368fd1cf0.png)
+Docker tag  in28min/todo-rest-api-h2:1.0.0.RELEASE in28min/todo-rest-api-h2:1.0.0.latest
 
 
-![image](https://user-images.githubusercontent.com/25869911/120239686-68ee7000-c224-11eb-849a-f0b5eb83c11f.png)
+For pull images from docker hub
 
+Docker pull mysql   -> this going to pull latest tag , can be not most latest
 
+Mysql is offitial image
 
+docker search mysql  -> to search all images that cotains name mysql 
 
+ofitial images – has meeting certain standard
 
+image for java or tomcat – use offitial image
 
 
+docker image history joij98(image id).  -> to see the history
 
-Agregar esto en application properties to use config server
+to see the numbers or process(steps to create) of instructions -> shell commands
 
-.	spring.config.import=optional:configserver:http://localhost:8888
 
+docker image inspect c0cdc95609f1.  -> you can see in json configuration like version, what java run , etc, meta data.
 
-limit-service – if for denifing limits of minimum and maximum  - simple limit service
 
-http://localhost:8080/limits
+Docker image remove c0cdc95609f1 -> remove image from local machine
 
 
-{
-minimum: 1,
-maximum: 1000
-}
+Containers – 
 
+You can run container with docker container run
 
-Use application configuration and connect it to centralized configuration
+You can pause and unpause container
 
-Application.properties
+Docker container pause 6478.  – first 4 digits of the id container.  – pause the run container
 
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
+Docker container logs -f 6478 ->.  You can see the run state iner container
 
-## values for limits of minimum and maximum
-limits-service.minimum=2
-limits-service.maximum=998
+Docker container unpause 6478.  – for run again
 
 
 
-Create configuration.java file in configuration folder for reuse values in application.properties in our rest controller service
+Docker container inspect 6478 – json – you can see metadata about container, current state, platform, volume. 
 
 
-@Component
-@ConfigurationProperties("limits-service")
-public class Configuration {
-    private int minimum;
-    private int maximum;
-    public int getMinimum() {
-        return minimum;
-    }
-    public void setMinimum(int minimum) {
-        this.minimum = minimum;
-    }
-    public int getMaximum() {
-        return maximum;
-    }
-    public void setMaximum(int maximum) {
-        this.maximum = maximum;
-    }
-}
+Docker container prune-> delete all container that is stopped
 
 
-@Autowired
-    private Configuration configuration;
+Stop command is for graceful shutdown -> signal is send like SIGTERM
 
-@GetMapping("/limits")
-    public Limits retrieveLimits() {
-        // return new Limits(1,1000);
-        return new Limits(configuration.getMinimum(), configuration.getMaximum());
-    }
+Docker container stop 6478 -> if you are using docker container logs -f dockerId CAN see how to stopped.
+Docker container kill 6478 -> if you are using docker container logs -f dockerId CAN see stop instantly.  Kill send SIGKILL
 
 
-Set up spring cloud config server and connect to github repository
+-	Restart policy ->  always(when you docker client restart, this run automatically), no(default),  database always running, daemon restart by accident,
 
-Create spring initializr the app
-Application properties
-## put name the application
-spring.applciation.name=spring-cloud-config-server
+docker container run -p 5000:5000 -d --restart=always in28min/todo-rest-api-h2:0.0.1-SNAPSHOT
 
-## configure the port of this server
-server.port = 8888
 
 
-create git hub repository
+docker commands –
 
-add limits-service.propertie file
+docker events – can see what events is happening, when some commands is executing. What happening in background
 
-limits-service.minimum=3
-limits-service.maximum=997
+docker top cfe23 – use to check the used to check what is the top process which is running in a specific container – what is the process is running – to see the specific container id
 
+docker stats – show all the states of running containers , like memory and cpu usage etc.
 
+you can run container with memory and cpu limits. Maximum of 512 megabyte of memory.
+Cpu Quota is 100000 = 100 % so 5000 is 5% 
 
-add in the spring cloud server application propertie file, the path of limits-service.propertie file of git
+docker container run -p 5001:5000 -m 512m --cpu-quota 5000 -d in28min/todo-rest-api-h2:0.0.1-SNAPSHOT
 
-spring.cloud.config.server.git.uri=file:///Users/mxn1020/Documents/VSCode/git-
-localconfig-repo
 
-and enable config server
-@EnableConfigServer
-@SpringBootApplication
-public class SpringCloudConfigServerApplication {
+docker system df   -  see what docker daemon manages like images, containers, local volumnes and build cache
 
 
-connect limits microservice to spring cloud config server
+Distritubted tracing(complex call chain when the microservices depends another microservices)
 
-in the limit microservices application.properties
-
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
-
-
-So limit services use config server that use values from git
-
-If there are various enviroments for limits services – for github repositories
-
-In the github you can create each environment propertie files
-
-limits-service-dev.properties
-
-google chrome browser
-
-http://localhost:8888/limits-service/qa   - this will show first the will take qa values and default value(second option)
-
-limit service in application propertie file you can use profile to select the environment
-## multiple enviroments using profile
-spring.profiles.active=dev
-
-
-![image](https://user-images.githubusercontent.com/25869911/120239714-7c99d680-c224-11eb-9a17-efe538baae81.png)
-
-
+How do you debug problems, how do you trace requests across microservices, what microservices is causing the problem.
 
  
 
-Create currency extetchange service- add config client from spring cloud
-
-Set in the application.property the port and name of app
+All microservices send information to one distrusted tracing server(store database in memory or persistent database) and distributed tracing server provide interface to trace the issues in microservices.
 
 
-## put name the application
-spring.application.name=currency-exchange
+Distributed tracing server is zipkin and launch in a container
 
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
+docker run -p 9411:9411 openzipkin/zipkin:2.23
 
-## configure the port of this server
-server.port = 8000
-
-create controller with pathvariable and java beans for return hardcoded values.
+http://localhost:9411/zipkin/
 
 
+connect the microservices to zipkin –
+in the currency exchange service -> pom.xml add, the rabbit is for later use
 
- ![image](https://user-images.githubusercontent.com/25869911/120239719-83c0e480-c224-11eb-8c34-8425fe469dbf.png)
-
-
-
-
-
-Add In the bean environment of string in the currency exchange service
-
-
-Run multiple instances in the different port
-
- mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8001
-
-
-create currency conversion service
-application properties
-
-## put name the application
-spring.application.name=currency-conversion
-
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
-
-## configure the port of this server
-server.port = 8100
-
-create beans
-
-create controller
-
-you can use rest template(only for 1 service) or feign(much better to use 100 services) for use another rest service
-
-@RestController
-public class CurrencyConversionController {
-
-    @Autowired
-    private CurrencyExchangeProxy proxy;
-
-    @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
-    public CurrencyConversion calculateCurrencyConversion(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
-        
-        // restTemplate can be use to call rest api
-        HashMap<String,String> uriVariables = new HashMap<>();
-        uriVariables.put("from", from);
-        uriVariables.put("to", to);
-        
-        ResponseEntity<CurrencyConversion> responseEntity = new RestTemplate().getForEntity("http://localhost:8000/currency-exchange/from/{from}/to/{to}", CurrencyConversion.class, uriVariables);
-        CurrencyConversion currencyConversion = responseEntity.getBody();
-
-        return new CurrencyConversion(currencyConversion.getId(), from, to, quantity, currencyConversion.getConversionMultiple(), quantity.multiply(currencyConversion.getConversionMultiple()), currencyConversion.getEnvironment());
-         
-    }
-
-    @GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
-    public CurrencyConversion calculateCurrencyConversionFeign(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity) {
-        
-       
-        CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
-
-        return new CurrencyConversion(currencyConversion.getId(), from, to, quantity, currencyConversion.getConversionMultiple(), quantity.multiply(currencyConversion.getConversionMultiple()), currencyConversion.getEnvironment());
-         
-    }
-    
-}
-
-
-enable feign
-
-@SpringBootApplication
-@EnableFeignClients
-public class CurrencyConversionServiceApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(CurrencyConversionServiceApplication.class, args);
-    }
-
-}
-
-
-
-
-
-spring cloud provide feign – easy to call another rest services – add feign in the pom.xml
    <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign</artifactId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
         </dependency>
-
-
-Create proxy interface for connect to another service - 
-
-@FeignClient(name="currency-exchange", url="localhost:8000")
-public interface CurrencyExchangeProxy {
-
-    @GetMapping("/currency-exchange/from/{from}/to/{to}")
-    public CurrencyConversion retrieveExchangeValue(@PathVariable String from, @PathVariable String to);
-    
-}
-
-
-
-When we create naming server(create various instances) , feign help with the load balancer of the service.
-
-For dynamically launch currency exchange  instances and distribute load between them(load balancer).
-Don’t harcode the feing client url putting directly the url with ports
--	service registry or naming server
-
-
-naming server – will be registered all the instances of the microservices
-
-currency conversion microservice ask to the naming server what are the addresses of currency exchange microservices.
-Create naming server on the spring initialzr -  eureka
-Eureka naming server
-
-
-@EnableEurekaServer
-@SpringBootApplication
-public class NamingServerApplication {
-
-
-application.properties
-
-## put name the application
-spring.application.name=naming-server
-
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
-
-## configure the port of this server
-server.port = 8761
-
-## we dont want to register with itself, only can find another ones
-eureka.client.register-with-eureka=false
-eureka.client.fetch-registry=false
-
-
-Top Recommendation From Debugging Guide:
-Give these settings a try individually in application.properties of all microservices (currency-exchange, currency-conversion) to see if they help
-1.	eureka.instance.prefer-ip-address=true
-OR
-1.	eureka.instance.hostname=localhost
-
-we need register service in eureka.
-Add in the pom xml from currency conversion and currency exchange
 <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-
-
-Now in eureka http://localhost:8761/
-You can see the instance up
-
-Applicatrion properties of currency exchange and conversion service
-## configure url for eureka server - for connect specific or another server
-eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
-
-
-add load balancer (spring cloud loadbalancer)
-Spring cloud load balancer
-
-@FeignClient(name="currency-exchange")
-public interface CurrencyExchangeProxy {
-
-Feign client talk to eureka and pick up the instances of currency exchange and do load balancing.
-
-Client side load balancing – spring cloud load balancer inside eureka
-
-Micrservices have common features – authentication, authorization, logging and rate limiting -> api gateway(old is zuul) -> spring cloud gateway
-
-Spring cloud gateway
-
-Spring initializr create the api-gateway
-Add config client and eureka discovery client and gateway(spring cloud routing)
-
-Add application properties of api gateway service
-
-## put name the application
-spring.application.name=api-gateway
-
-## configure where spring config server will be
-spring.config.import=optional:configserver:http://localhost:8888
-
-## configure the port of this server
-server.port = 8765
-
-## configure url for eureka server - for connect specific or another server
-eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
-eureka.instance.hostname=localhost
-
-## enable the discovery using discovery client, this is possible(eureka client)
-spring.cloud.gateway.discovery.locator.enabled=true
-## convert the api name to lower case
-spring.cloud.gateway.discovery.locator.lower-case-service-id=true
-
-
-
-api gateway
-
-api gateway application properties
-
-
-api gateway need to talk to eureka to fin the server location
-
-client for current exchange you can give this url 
-http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/WON
-
-you can implement authentication in api gateway. 
-Build custom route – create configuration file
-
-@Configuration
-public class ApiGatewayConfiguration {
-    
-    // customiza your route of gateway
-    @Bean
-    public RouteLocator gatewayRouter(RouteLocatorBuilder builder) {
-        
-        // uri can be specfric url, for the authentication header you can use addRequestHeader
-        // everything in the currency change path  "/currency-exchange/**"
-        // use load balancer regitered in eureka lb://currency-exchange
-        // custom url : http://localhost:8765/currency-exchange/from/USD/to/WON
-        // regex about all segment is copied in the second 
-        //f.rewritePath("/currency-conversion-new/(?<segment>.*)", "/currency-conversion-feign/${segment}"))
-
-        return builder.routes().route(p -> p.path("/get")
-                                .filters(f -> f.addRequestHeader("MyHeader", "MyURI")
-                                .addRequestParameter("Param", "MyValue"))
-                                .uri("http://httpbin.org:80"))
-                                .route(p -> p.path("/currency-exchange/**")
-                                .uri("lb://currency-exchange"))
-                                .route(p -> p.path("/currency-conversion/**")
-                                .uri("lb://currency-conversion"))
-                                .route(p -> p.path("/currency-conversion-feign/**")
-                                .uri("lb://currency-conversion"))
-                                .route(p -> p.path("/currency-conversion-new/**")
-                                .filters(f -> f.rewritePath("/currency-conversion-new/(?<segment>.*)", "/currency-conversion-feign/${segment}"))
-                                .uri("lb://currency-conversion"))
-                                .build();
-    }
-}
-
-Cloud gateaway logging filter
-In api gateway you can add global filters
--	log every request that goest through the api gateway
--	@Component
--	public class LoggingFilter implements GlobalFilter {
--	
--	    private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
--	
--	    @Override
--	    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
--	    
--	        logger.info("Path of the request received -> {}", exchange.getRequest().getPath());
--	        return chain.filter(exchange);
--	    
--	    }
--	    
--	}
-
-
-What url was logged in printed in console in the api gateway rest api
-Autentification is implemented in api gateway
-Gateway – route to Apis
-Privide cross cutting concerns : security, monitoring/metrics
-Spring cloud gateway is built on top of spring webflux and you can match routes on any request attributes(header, host, request method, query parameter), you can define predicates and filters
-return builder.routes().route(p -> p.path("/get")
-                                .filters(f -> f.addRequestHeader("MyHeader", "MyURI")
-
-
-Spring cloud gateway integrates with spring cloud discovery client(load balancing) and path rewriting
- 
-  
-  ![image](https://user-images.githubusercontent.com/25869911/120239774-a3f0a380-c224-11eb-827d-6edd03bb069e.png)
-
-
-  ![image](https://user-images.githubusercontent.com/25869911/120239782-a6eb9400-c224-11eb-8c15-790455c97db6.png)
-
- 
-Circuit breaker with resilience4j
-Microservice like credit card cannot send fallback response but for e commercial site is possible do that.
-Circuit breaker pattern
-Rate limiting – only allowed certain amount of request in certain amount of time.
-Only after certain temporary failures return fallback default response
-Use resilence4j – lightweith, easy to use fault tolerance library inspired by netflix hystrix
-In currency exchange service in pom.xml
-We alredy have actuactor,  we need add aop and resilience4j
-<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot2</artifactId>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
         </dependency>
 
--	Retry -
-Application.proerties – you can setting retry numbers
-## custom the number of maximum retry calling by retry name is 5
-resilience4j.retry.instances.sample-api.maxRetryAttempts=5
 
-@Retry(name="sample-api", fallbackMethod = "hardcodedResponse")
-    public String sampleApi() {
+each microservices need unique id, so sleuth(framework) assigns a unique id to each request. We don’t want trace every request so we are going to use sample configuration(we just trace some percentage of the request, for performance impact)
 
-Create circuitBreakController - > rest controller
+application.property file add
+## samplig configuration for distributed tracing, trace every request 1.0
+## for the production 0.05 is 5 %
 
-Manually fired various request in command
-watch curl http://localhost:8000/sample-api
-10 request per seconds
-watch -n 0.1 curl http://localhost:8000/sample-api
-
-circuit breaker, if some service is down, its not calling the down service and return default response.
-3 states in circuit breaker – closed(always call microservices) , open(not call microservices, return callback response) and half open (would be sending a percentage of requests to the dependent microservice, for rest of the requests, it would return the hardcoded response or the fall back response.)
-Start closed, 1000 times all failing 90% -> switch open state, wait little while change half open(check if up, percentage), if have proper response its go to closed, if not go back to open.
-You can customize failureratethreshold, etc.
-You can configure in yaml file or application properties
-## circuit breaker - when 90% of request fail, switch to open state
-resilience4j.circuitbreaker.instances.default.failureRateThreshold=90
-
-rate limiting
-// 10 seconds allows only 10000 calls to this api
-@RateLimiter(name="default")
-    public String sampleApi() {
-
-in application properties you can set configuration
-
-## rate limiter config - 2 request per 10 seconds
-resilience4j.ratelimiter.instances.default.limitForPeriod=2
-resilience4j.ratelimiter.instances.default.limitRefreshPeriod=10s
+spring.sleuth.sampler.probability=1.0
 
 
+add Logger, when you see the logs now you can see the request has unique id.
+
+By default configuration in zipkin microservices can find the distributed tracing server. 
+Default is working same url if you are running zipkin in another url
+In the application properties of micrservices you need to add
+
+spring.zipkin.baseUrl=http://locahost:9411/
+
+
+each microservices running individual containers.
+
+
+Create containers for services
+
+In pom.xml add in the build.  – configuration the name is the docker hub id, name of the image.  V2 – version 2
+Spring maven plugin use to create docker images, configure pull policy – default is ALWAYS.     IF_NOT_PRESENT – only images is not in the local , search in the docker hub
+
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>dockerguemamusa101/mmv2-${project.artifactId}:${project.version}</name>
+                    </image>
+                    <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 
-Bulkhead – how many concurrent call alloweed
-@Bulkhead(name="default")
-    public String sampleApi() {
 
-in application properties you can set configuration
-## bulkhead config - maximum 10 concurrent call, sample api is the name
-resilience4j.bulkhead.instances.default.maxConcurrentCalls=10
-resilience4j.bulkhead.instances.sample-api.maxConcurrentCalls=10
+Run the command 
+./mvnw spring-boot:build-image
+./mvnw spring-boot:build-image -DskipTests.  -> for skip the test
+
+This create jar file
+-	First time is taking some time, because its download all 
+
+This will create docker image
+
+For run docker image in the terminal
+
+Docker run -p 8000:8000 dockerguemamusa101/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+
+-	You need to launch zipkin and eureka simultaneously
 
 
-CircuitController.java
-@RestController
-public class CircuitBreakerController {
 
-    // add logger for this particular controller
-    private Logger logger = LoggerFactory.getLogger(CircuitBreakerController.class);
+Docker compose – to launch multiple microservices simultaneously(autmate)
 
-    // with retry annotation(multiple time when server is temporary down) when this is down, can do it again
-    // default is the default configuration for retry -> if fail try another 2 times - total 3 times - after 3 times return error only
-    // configure fallbackMethod -> hardcodedResponse is method
-    @GetMapping("/sample-api")
-    //@Retry(name="dafault")
-    //@Retry(name="sample-api", fallbackMethod = "hardcodedResponse")
-    //@CircuitBreaker(name="default", fallbackMethod = "hardcodedResponse")
-    // 10 seconds allows only 10000 calls to this api
-    //@RateLimiter(name="default")
-    @Bulkhead(name="default")
-    public String sampleApi() {
+Compose is a tool for defining and running multi-container docker applications. With compose , you use a YAML file to configure your applications services
 
-        logger.info("Sample Api call received");
-        ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://locahost:8080/some-dummy-url", String.class);
-        // for testing fallback response
-        //ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://locahost:8080/some-dummy-url", String.class);
-        return forEntity.getBody();
+
+Single commando to launch YAML file – all launches
+Docker desktop for mac and windows have docker compose, for linux you need to install
+
+Docker-compose –version.  -> to see docker composion version in terminal
+
+Create in the root carpeta that contains all carpet of microservices
+docker-compose.yaml file
+
+put version, in docker compose, each container is service
+define services
+
+YAML file is sensible to space, use only 2 spaces not tab
+
+For services use the same name of the project
+
+Edit yaml file
+
+Go to the root carpet where all the services is in the folder and where you can find the yaml file in the terminal
+
+docker-compose up
+
+this will launch the yaml docker compose file
+
+good practice in docker-compose is create the network
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: dockerguemamusa101/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8000:8000"
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+
+
+always build the image first – docker
+
+you can specify the service that depends_on another service
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: dockerguemamusa101/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+
+  naming-server:
+    image: dockerguemamusa101/mmv2-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8761:8761"
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+
+
+from the inside of the docker container , locahost is not the same as in running in your machine.
+Option 1 – you can configure application.properties of the currency exchange service 
+If you change application.property you need to rebuild the container image.
+## for docker container
+eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+
+option 2 - you can add environment variable in the docker componse yaml file. Use all mayuscule for environment and :
+
+environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+
+
+
+You can add all  your own services like this and add services from docker hub library like zipkin and rabbit mq
+
+
+Docker swarm is a container orchestration tool, is like kubernetes
+
+
+
+
+Rabbit mq
+
+
+we using message queue, because if the distrusted tracing server is down, the data will be losed, so we can store in the queue(rabbit mq).
+ 
+
+
+Add rabbit mq in pom.xml
+
+   <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+        </dependency>
+
+
+In application.properties add this
+spring.zipkin.sender.type=rabbit
+
+or add environment, dependencies and the rabbitmq service in the yaml docker compose file.
+
+
+rabbitmq:
+    image: rabbitmq:3.8.12-management
+    mem_limit: 700m
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - currency-network
+
+
+For rest of the rest api :
+
+environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPINRG_ZIPKIN_SENDER_TYPE: rabbit
+
+For zipkin
+environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+   
+
+
+For zipkin and rest of the rest api add dependencies
+  depends_on:
+      - rabbitmq
+
+
+
+Final docker compose
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: dockerguemamusa101/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPINRG_ZIPKIN_SENDER_TYPE: rabbit
+
+  currency-conversion:
+    image: dockerguemamusa101/mmv2-currency-conversion-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8100:8100"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPINRG_ZIPKIN_SENDER_TYPE: rabbit
+
+  api-gateway:
+    image: dockerguemamusa101/mmv2-api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8765:8765"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPINRG_ZIPKIN_SENDER_TYPE: rabbit
+
+  naming-server:
+    image: dockerguemamusa101/mmv2-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports: 
+      - "8761:8761"
+    networks:
+      - currency-network
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    mem_limit: 700m
+    ports: 
+      - "9411:9411"
+    networks:
+      - currency-network
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
     
-    }
-        
-    // you can customize by different fallback - different exception
-    public String hardcodedResponse(Exception ex) {
-        return "fallback-response";
-    }
-    
-}
+  rabbitmq:
+    image: rabbitmq:3.5.3-management
+    mem_limit: 700m
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - currency-network
 
-
+networks:
+  currency-network:
